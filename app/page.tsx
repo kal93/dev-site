@@ -1,13 +1,32 @@
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styles from './page.module.css'
+import Header from '@/components/Header'
+import { Suspense } from 'react'
+import Loader from '@/components/loader'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+
+const getData = async () => {
+    const data = await fetch('https://www.reddit.com/.json');
+    return data.json();
+}
+
+export default async function Home() {
+
+  const data = await getData();
+  const post = data.data.children[0].data.title;
+
+  // throw new Error('Page Error');
   return (
     <main className={styles.main}>
+
+      <Suspense fallback={ <Loader></Loader>}>
+      <Header></Header>
+      </Suspense>
       <div className={styles.description}>
+        <h1>{post}</h1>
         <p>
           Get started by editing&nbsp;
           <code className={styles.code}>app/page.tsx</code>
@@ -86,6 +105,9 @@ export default function Home() {
           </p>
         </a>
       </div>
+
+
+      
     </main>
   )
 }
